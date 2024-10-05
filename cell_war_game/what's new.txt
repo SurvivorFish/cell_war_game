@@ -2,3 +2,4 @@ added bord
 added pieces (figures)
 added terminal visualization
 added git😎
+1
