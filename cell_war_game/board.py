@@ -1,5 +1,6 @@
 import math
 import BM
+import figure
 from colorama import Back
 from colorama import Style
 
@@ -7,20 +8,20 @@ from colorama import Style
 class Board:
     figures = []
 
-    def __init__(self, width, height):  # creating a board
+    def __init__(self, width: int, height: int):  # creating a board
         self.w = width
         self.h = height
         self.names = [['   ' for _ in range(height)] for _ in range(width)]
         self.cells = [[-1 for _ in range(height)] for _ in range(width)]
 
-    def add_figure(self, fgr):  # adding a figure to the board
+    def add_figure(self, fgr: figure.Figure):  # adding a figure to the board
         self.figures.append(fgr)
         x = fgr.place.x
         y = fgr.place.y
         self.cells[x][y] = len(self.figures) - 1
         self.names[x][y] = fgr.team.colour + fgr.name
 
-    def move(self, x1, y1, x2, y2):  # moving a figure
+    def move(self, x1: int, y1: int, x2: int, y2: int):  # moving a figure
         if self.cells[x1][y1] == -1:  # if there is no figure to move, so ???
             print("???")
         else:

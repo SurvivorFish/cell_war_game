@@ -11,7 +11,7 @@ def test_designation():  # Just small test of designation of columns
         print(str(BM.num(ch)) + " " + ch)
 
 
-def move(from_cell, to_cell):
+def move(from_cell: str, to_cell: str):  # cells are added like user sees it
     x1 = BM.num(from_cell[0])
     y1 = int(from_cell[1:]) - 1
     x2 = BM.num(to_cell[0])

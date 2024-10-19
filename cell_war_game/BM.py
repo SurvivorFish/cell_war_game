@@ -36,9 +36,6 @@ def char(number: int):  # designation in russian letters. Firstly - lowercase, t
 
 
 class Place:
-    x: int
-    y: int
-
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -53,9 +50,6 @@ class Place:
 
 
 class Team:
-    name = 'NON'
-    colour = ''
-
-    def __init__(self, name, colour):
+    def __init__(self, name: str, colour: str):  # colour - from colorama
         self.name = name
         self.colour = colour

@@ -1,3 +1,6 @@
+ADDITION FOR PREVIOUS COMMIT!
++type hints
+
 simplified method move class Board in Board.py
 removed статик класс филдс :) (I hope)
 just some renames for understanding and following Camel by camel convention
