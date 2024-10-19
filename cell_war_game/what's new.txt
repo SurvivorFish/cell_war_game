@@ -1,6 +1,7 @@
-added a lot of classes,
-so now there are:
-teams and colors
-preparation for possible moves
-
-I hope there are some code improvements, but possibly its still awkward
+simplified method move class Board in Board.py
+removed статик класс филдс :) (I hope)
+just some renames for understanding and following Camel by camel convention
+added some kind of teams and queue of steps
+changed type of designation of columns and test for it. Now it is up to 66, may be more, but than it will be not good :)
+now Pycharm doesn't show any warnings/typos and so on in my code
+also changed move command: now you can't move empty piece, and you can't move other's (on other's) pieces

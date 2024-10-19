@@ -1,30 +1,33 @@
 import BM
-
-class figure:
-    name = '   '
-    place = []
-    moves = []
-    team = 'NON'
+from dataclasses import dataclass
 
 
-class guy(figure):
+@dataclass
+class Figure:
+    name: str
+    place: BM.Place
+    moves: []
+    team: str
+
+
+class Guy(Figure):
     moves = [(-1, -1), (0, -1), (1, -1)]
 
     def __init__(self, x, y, team):
         self.name = 'guy'
-        self.place = BM.place(x, y)
+        self.place = BM.Place(x, y)
         self.team = team
 
 
-class cat(figure):
+class Cat(Figure):
     def __init__(self, x, y, team):
         self.name = 'cat'
-        self.place = BM.place(x, y)
+        self.place = BM.Place(x, y)
         self.team = team
 
 
-class king(figure):
+class King(Figure):
     def __init__(self, x, y, team):
         self.name = team.name
-        self.place = BM.place(x, y)
+        self.place = BM.Place(x, y)
         self.team = team
