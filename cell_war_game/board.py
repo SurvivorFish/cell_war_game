@@ -1,14 +1,13 @@
 import math
-import BM
+import alphabet
 import figure
 from colorama import Back
 from colorama import Style
 
 
 class Board:
-    figures = []
-
     def __init__(self, width: int, height: int):  # creating a board
+        self.figures = []
         self.w = width
         self.h = height
         self.names = [['   ' for _ in range(height)] for _ in range(width)]
@@ -30,67 +29,70 @@ class Board:
             self.cells[x1][y1] = f2
             self.cells[x2][y2] = f1
             self.figures[f1].place = (x2, y2)
-            if f2 != -1: self.figures[f2].place = (x1, y1)  # if there is no second figure, no need to change its place
-            if f2 != -1:  # if there is no second figure, it is just space
+            if f2 != -1:  # if there is no second figure, it is just space and no need to change its place
+                self.figures[f2].place = (x1, y1)
                 self.names[x1][y1] = self.figures[f2].team.colour + self.figures[f2].name
             else:
                 self.names[x1][y1] = "   "
             self.names[x2][y2] = self.figures[f1].team.colour + self.figures[f1].name
 
-    def print(self, place_of_chosen_figure=BM.Place(-1, -1)):
-        if place_of_chosen_figure.x == -1 and place_of_chosen_figure.y == -1:  # if no figures are chosen
-            gaps = int(math.log10(self.h)) + 1  # number of gaps needed to make 
-            s = gaps * ' '
-            for i in range(self.w):
-                s += '  ' + BM.char(i) + ' '
-            print(s)
-            for i in range(2 * self.h + 1):
-                s = ""
+    # Next lines are printing the board
 
-                if i % 2 == 0:
-                    s += gaps * ' '
-                else:
-                    s += (gaps - int(math.log10((i + 1) / 2)) - 1) * ' ' + str(i // 2 + 1)
-                for j in range(2 * self.w + 1):
-                    if i % 2 == 0:
-                        if j % 2 == 0:
-                            s += '+'
-                        else:
-                            s += '---'
-                    elif j % 2 == 0:
-                        s += '|'
-                    else:
-                        s += self.names[(j - 1) // 2][(i - 1) // 2]
-                        s += Style.RESET_ALL
-                print(s)
-        else:  # if some figure is chosen (now the only difference is next string and colored background)
-            this_figure = self.figures[self.cells[place_of_chosen_figure.x][place_of_chosen_figure.y]]
-            print(this_figure.name + " is chosen")  # just printing that figure is chosen
-            gaps = int(math.log10(self.h)) + 1
-            s = gaps * ' '
-            for i in range(self.w):
-                s += '  ' + BM.char(i) + ' '
-            print(s)
-            for i in range(2 * self.h + 1):
-                s = ""
+    def gap_count(self) -> int:
+        return int(math.log10(self.h)) + 1
 
-                if i % 2 == 0:
-                    s += gaps * ' '
-                else:
-                    s += (gaps - int(math.log10((i + 1) / 2)) - 1) * ' ' + str(i // 2 + 1)
-                for j in range(2 * self.w + 1):
-                    if i % 2 == 0:
-                        if j % 2 == 0:
-                            s += '+'
-                        else:
-                            s += '---'
-                    elif j % 2 == 0:
-                        s += '|'
-                    else:
-                        if (j - 1) // 2 == place_of_chosen_figure.x and (i - 1) // 2 == place_of_chosen_figure.y:
-                            s += Back.BLACK + self.names[place_of_chosen_figure.x][
-                                place_of_chosen_figure.y] + Back.RESET  # Black background for highlighting
-                        else:
-                            s += self.names[(j - 1) // 2][(i - 1) // 2]
-                            s += Style.RESET_ALL
-                print(s)
+    def _separator(self) -> str:
+        return '---'.join(['+'] * (self.w + 1))
+
+    def _highlighted_separator(self, fr: int, to: int) -> str:  # Just separator with highlighting chosen place
+        return '---'.join(['+'] * (fr - 1) + ['']) + '█████' * (to - fr) + '---'.join([''] + ['+'] * (self.w + 1 - to))
+
+    def _header(self, lang: str) -> str:
+        return '  ' + ' ' * self.gap_count() + '   '.join([alphabet.char(i, lang) for i in range(self.w)])
+        # I already can't use map, because I added langs
+
+    def _row(self, i: int) -> str:
+        row_number = f'{i + 1:^{self.gap_count()}}'
+        items = [row_number] + [self.names[j][i] + Style.RESET_ALL for j in range(self.w)]
+        return '|'.join(items) + '|'
+
+    def _highlighted_row(self, i: int, fr: int, to: int) -> str:
+        row_number = f'{i + 1:^{self.gap_count()}}'
+        items = [row_number] + [self.names[j][i] + Style.RESET_ALL for j in range(self.w)]
+        first_items = items[:fr]
+        highlighted_items = items[fr:to]
+        last_items = items[to:]
+        return '|'.join(first_items) + '█' + '█'.join(highlighted_items) + '█' + '|'.join(last_items) + '|'
+
+    def print(self, lang: str, chosen_place: alphabet.Place = None):
+        if chosen_place is None:
+            print(self._header(lang))
+            print(" " * self.gap_count() + (self._separator()))
+
+            rows = [self._row(i) for i in range(self.h)]
+            print(("\n" + " " * self.gap_count() + self._separator() + '\n').join(rows))
+
+            print(" " * self.gap_count() + (self._separator() + '\n'))
+        else:
+            frX = chosen_place.x + 1
+            toX = chosen_place.x + 1
+            frY = chosen_place.y
+            toY = chosen_place.y
+            print(self._header(lang))
+            if frY != 0:
+                print(" " * self.gap_count() + (self._separator()))
+                rows = [self._row(i) for i in range(0, frY)]
+                print(("\n" + " " * self.gap_count() + self._separator() + '\n').join(rows))
+
+            print(" " * self.gap_count() + (self._highlighted_separator(frX, toX + 1)))
+
+            rows = [self._highlighted_row(i, frX, toX + 1) for i in range(frY, toY + 1)]
+            print(("\n" + " " * self.gap_count() + self._highlighted_separator(frX, toX + 1) + '\n').join(rows))
+
+            print(" " * self.gap_count() + (self._highlighted_separator(frX, toX + 1)))
+
+            rows = [self._row(i) for i in range(toY + 1, self.h)]
+            print(("\n" + " " * self.gap_count() + self._separator() + '\n').join(rows))
+
+            if toY != self.h - 1:
+                print(" " * self.gap_count() + (self._separator() + '\n'))

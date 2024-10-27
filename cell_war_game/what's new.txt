@@ -1,10 +1,20 @@
-ADDITION FOR PREVIOUS COMMIT!
-+type hints
+А, я понял, почему я во всех классах написал static fields. Просто я ещё на Java программировал,
+а там создание класса выглядит так же, как в Python создание класса со статическими полями)
 
-simplified method move class Board in Board.py
-removed статик класс филдс :) (I hope)
-just some renames for understanding and following Camel by camel convention
-added some kind of teams and queue of steps
-changed type of designation of columns and test for it. Now it is up to 66, may be more, but than it will be not good :)
-now Pycharm doesn't show any warnings/typos and so on in my code
-also changed move command: now you can't move empty piece, and you can't move other's (on other's) pieces
+в figure.py, line 12 не понял, что значит moves:list[tuple[int, int]] = field(default_factory=list)
+
+Скажите, что значит в питоне @property и все такие слова после @. Просто кажется, что на код они не влияют...
+
+renamed BM to alphabet
+added languages for columns designation
+rewritten columns designation
+good legacy(legoshi) in figures (+ added moves, but they still don't work)
+beautiful print, written by https://github.com/doreshnikov (but with my small improvements)
+added print with choosing a figure (later it will be choosing a list of cells) (try 'move c3')
+added possible moves for figures (next step is to make figures move in particular way, and show possible moves of figure)
+added skip
+
+smaller improvements:
+no double if in board.py
+no static field in Board in board.py
+I hope some help messages
