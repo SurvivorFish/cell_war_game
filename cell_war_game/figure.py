@@ -18,7 +18,11 @@ class Figure:
         self.place = place
         self.moves = moves
         self.team = team
-        self.pos_moves = [self.place+move for move in self.moves]  # possible moves
+
+    def goto(self, place):
+        if isinstance(place, alphabet.Place): self.place = alphabet.Place(place.x, place.y)
+        if isinstance(place, tuple): self.place = alphabet.Place(place[0], place[1])
+        return place
 
 
 class Guy(Figure):
@@ -31,9 +35,9 @@ class Guy(Figure):
 
 
 class Cat(Figure):
-    moves = [(-1, -1), (0, -1), (1, -1),
-             (-1, 0), (1, 0),
-             (-1, 1), (0, 1), (1, 1)]
+    moves = [(-2, -2), (0, -2), (2, -2),
+             (-2, 0), (2, 0),
+             (-2, 2), (0, 2), (2, 2)]
 
     def __init__(self, x: int, y: int, team: alphabet.Team):
         super(Cat, self).__init__('cat', alphabet.Place(x, y), self.moves, team)

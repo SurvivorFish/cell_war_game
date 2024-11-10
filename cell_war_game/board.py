@@ -28,9 +28,9 @@ class Board:
             f2 = self.cells[x2][y2]
             self.cells[x1][y1] = f2
             self.cells[x2][y2] = f1
-            self.figures[f1].place = (x2, y2)
+            self.figures[f1].goto((x2, y2))
             if f2 != -1:  # if there is no second figure, it is just space and no need to change its place
-                self.figures[f2].place = (x1, y1)
+                self.figures[f2].goto((x1, y1))
                 self.names[x1][y1] = self.figures[f2].team.colour + self.figures[f2].name
             else:
                 self.names[x1][y1] = "   "

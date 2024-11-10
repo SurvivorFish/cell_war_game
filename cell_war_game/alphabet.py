@@ -48,15 +48,23 @@ class Place:
         self.x = x
         self.y = y
 
-    def add_tuple(self, p: tuple):  # I hope, I'll use it in the future
+    def _add_tuple(self, p: tuple):  # I hope, I'll use it in the future
         return Place(self.x + p[0], self.y + p[1])
 
     def __add__(self, other):
-        if isinstance(other, Place):
-            return Place(self.x + other.x, self.y + other.y)
-        elif isinstance(other, tuple): return self.add_tuple(other)
+        if isinstance(other, Place): return Place(self.x + other.x, self.y + other.y)
+        if isinstance(other, tuple): return self._add_tuple(other)
         return
 
+    def __sub__(self, other):
+        if isinstance(other, Place): return Place(self.x - other.x, self.y - other.y)
+        if isinstance(other, tuple): return self._add_tuple((-other[0], -other[1]))
+        return
+
+    def __eq__(self, other):
+        if isinstance(other, Place): return self.x == other.x and self.y == other.y
+        if isinstance(other, tuple): return self.x == other[0] and self.y == other[1]
+        else: return
 
 
 class Team:
