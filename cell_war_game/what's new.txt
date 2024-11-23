@@ -6,6 +6,9 @@ added presets of piece placement
 understood, that code is toooooooooo complicated
 tried to play with brother on preset 2 (first game.txt) (not played till end)
 
+provedeno second battle with https://github.com/collapsedonion
+realized that only first player can win... how chestnosti netu...
+
 plans:
 perelopatit code: there are a lot of Legoshi code, it works, but may be more beautiful (already done with pos_moves)
 good highlighted board print

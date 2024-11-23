@@ -35,11 +35,10 @@ for i in _settings_file_.read().split('\n'):
 _settings_file_.close()
 
 
-boardik = board.Board(11, 11)
+boardik = board.Board(7, 7)
 # It is not good to use more than 66 columns. (You will see, why it is so).
 
 teams = [alphabet.Team("RED", Fore.RED), alphabet.Team("BLU", Fore.BLUE)]
-
 available_langs = ["ru", "en"]
 langs = []
 
@@ -59,7 +58,7 @@ else:
         langs.append(default_lang)
 
 
-preset = 3
+preset = 2
 
 if preset == 0:
     # Red team
@@ -131,7 +130,7 @@ else:
     boardik.add_figure(figure.King(0, 0, teams[0]))
 
 end = False  # Just flag for stopping the game
-step = 1  # step is value that means team with number step will start first
+step = 0  # step is value that means team with number step will start first
 last_step = -1
 boardik.print(langs[step])
 while not end:
