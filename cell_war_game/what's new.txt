@@ -1,11 +1,10 @@
-removed error when choosing cell outside the board
-added equality for class Place in alphabet
-added move limitation for pieces
-command move code improvements
-added commands capture, attack and charge
-renamed f1 and f2 to p1 and p2. Just not to confuse place with figure.
-accidentally added Atomic heart reference in main.py, 141 string
-removed some pos_moves in figure in file figure.py
+added settings
+added balovstvo with pygame and resources for it
+added loosing game
+added way to win the game (eat the king)
+added presets of piece placement
+understood, that code is toooooooooo complicated
+tried to play with brother on preset 2 (first game.txt) (not played till end)
 
 plans:
 perelopatit code: there are a lot of Legoshi code, it works, but may be more beautiful (already done with pos_moves)

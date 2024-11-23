@@ -19,6 +19,22 @@ def move(from_cell: str, to_cell: str, language: str):  # cells are added like u
     boardik.move(x1, y1, x2, y2)
 
 
+# import settings
+_settings_file_ = open('cell_war_game/settings.txt', 'r')
+default_lang = 'en'
+ask_lang = 0
+use_terminal = 1
+
+for i in _settings_file_.read().split('\n'):
+    if 'default_lang:' in i:
+        default_lang = i.split('default_lang:')[-1].strip()
+    if 'ask_lang:' in i:
+        ask_lang = (int(i.split('ask_lang:')[-1].strip()) == 1)
+    if 'use_terminal:' in i:
+        use_terminal = bool(int(i.split('use_terminal:')[-1].strip()) == 1)
+_settings_file_.close()
+
+
 boardik = board.Board(11, 11)
 # It is not good to use more than 66 columns. (You will see, why it is so).
 
@@ -27,28 +43,131 @@ teams = [alphabet.Team("RED", Fore.RED), alphabet.Team("BLU", Fore.BLUE)]
 available_langs = ["ru", "en"]
 langs = []
 
-_default_lan = "en"
-while len(langs) < len(teams):  # Choosing language for each team
-    print("Choose language for " + teams[len(langs)].name + " team (ru or en)")
-    lang = input()
-    if lang in available_langs:
-        langs.append(lang)
-    elif lang == "":
-        langs.append(_default_lan)
-    else:
-        print("I don't know " + lang + " language")
 
-# Red team
-boardik.add_figure(figure.Guy(5, 5, teams[0]))
-boardik.add_figure(figure.Cat(2, 2, teams[0]))
-boardik.add_figure(figure.King(3, 8, teams[0]))
-# Blue team
-boardik.add_figure(figure.King(3, 0, teams[1]))
+if ask_lang:
+    while len(langs) < len(teams):  # Choosing language for each team
+        print("Choose language for " + teams[len(langs)].name + " team (ru or en)")
+        lang = input()
+        if lang in available_langs:
+            langs.append(lang)
+        elif lang == "":
+            langs.append(default_lang)
+        else:
+            print("I don't know " + lang + " language")
+else:
+    while len(langs) < len(teams):
+        langs.append(default_lang)
 
-end = False  # Just flag
-step = 0  # step is value that means team with number step will start first
+
+preset = 3
+
+if preset == 0:
+    # Red team
+    boardik.add_figure(figure.Guy(5, 5, teams[0]))
+    boardik.add_figure(figure.Cat(2, 2, teams[0]))
+    boardik.add_figure(figure.King(3, 8, teams[0]))
+    # Blue team
+    boardik.add_figure(figure.King(4, 0, teams[1]))
+
+elif preset == 1:
+    # Pawns
+    for i in range(boardik.w):
+        # Red team
+        boardik.add_figure(figure.Guy(i, 1, teams[0]))
+        # Blue team
+        boardik.add_figure(figure.Guy(i, boardik.h-2, teams[1]))
+
+    # Kings
+    # Red team
+    boardik.add_figure(figure.King(boardik.w//2, 0, teams[0]))
+    # Blue team
+    boardik.add_figure(figure.King(boardik.w//2, boardik.h-1, teams[1]))
+
+elif preset == 2:
+    # Pawns
+    for i in range(boardik.w):
+        # Red team
+        boardik.add_figure(figure.Guy(i, 1, teams[0]))
+        # Blue team
+        boardik.add_figure(figure.Guy(i, boardik.h-2, teams[1]))
+
+    # Kings
+    # Red team
+    boardik.add_figure(figure.King(boardik.w//2, 0, teams[0]))
+    boardik.add_figure(figure.Cat(boardik.w//2-1, 0, teams[0]))
+    boardik.add_figure(figure.Cat(boardik.w//2+1, 0, teams[0]))
+    # Blue team
+    boardik.add_figure(figure.King(boardik.w//2, boardik.h-1, teams[1]))
+    boardik.add_figure(figure.Cat(boardik.w//2-1, boardik.h-1, teams[1]))
+    boardik.add_figure(figure.Cat(boardik.w//2+1, boardik.h-1, teams[1]))
+
+elif preset == 3:
+    # an error occured, so I made asdjhnfjkdsfgbj
+
+    boardik.add_figure(figure.King(boardik.w // 2, 0, teams[0]))
+    # Blue team
+    boardik.add_figure(figure.King(boardik.w // 2, boardik.h - 1, teams[1]))
+    boardik.add_figure(figure.Cat(boardik.w // 2 - 1, boardik.h - 1, teams[1]))
+    boardik.add_figure(figure.Cat(boardik.w // 2 + 3, boardik.h - 1, teams[1]))
+
+    for i in range(2):
+        boardik.add_figure(figure.Guy(4+i, 4, teams[0]))
+        boardik.add_figure(figure.Guy(i, 9, teams[1]))
+        boardik.add_figure(figure.Guy(9+i, 9, teams[1]))
+
+    for i in range(3):
+        boardik.add_figure(figure.Guy(8+i, 1, teams[0]))
+
+    for i in range(5):
+        boardik.add_figure(figure.Guy(3+i, 8, teams[1]))
+
+    boardik.add_figure(figure.Guy(3, 5, teams[0]))
+    boardik.add_figure(figure.Guy(6, 5, teams[0]))
+    boardik.add_figure(figure.Guy(0, 1, teams[0]))
+    boardik.add_figure(figure.Guy(2, 3, teams[0]))
+    boardik.add_figure(figure.Guy(5, 1, teams[0]))
+
+else:
+    boardik.add_figure(figure.King(0, 0, teams[0]))
+
+end = False  # Just flag for stopping the game
+step = 1  # step is value that means team with number step will start first
+last_step = -1
 boardik.print(langs[step])
 while not end:
+    if teams[step].lose:
+        last_step = step - 1
+    while teams[step].lose:
+        step = (step + 1) % len(teams)
+
+    if step == last_step: #this means, that only one team left
+        end = True
+        print(f'THE {teams[step].colour + teams[step].name + Style.RESET_ALL} is winner!!!')
+        print("""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠗⢤⡀⠀⠀⠀⠀⠀⠀⠀⣰⢶⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢀⣠⠴⠖⢏⣉⣉⣹⠀⠀⢹⢦⡀⠀⠀⡰⣆⢠⠃⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⣠⡶⠋⠁⢀⡴⠚⠉⠀⠀⠁⠀⠘⡎⣷⣄⠀⠇⢸⡎⢀⡇⣤⣄⠀⠀⢀⡤⠶⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⡴⢛⡠⠶⢶⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣾⣶⠀⢸⠀⢸⣾⠞⢹⡤⠚⠁⢀⡼⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⢸⡗⠉⠀⠀⣾⠀⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠹⡿⣧⠀⢀⡾⠁⠐⠋⠀⢀⣴⣋⠤⢤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⢸⡀⠀⡔⠉⢻⠀⠸⡏⢍⣿⣖⠺⡷⠤⠆⠀⠀⢹⣾⡀⣾⠖⡆⠀⠠⠔⠋⠁⣀⡴⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⢧⠀⣇⠀⠈⠣⡀⠙⢌⣿⣿⣿⠇⠀⠀⠀⠀⠀⢿⣿⡼⠀⣧⢤⡄⡠⠴⠮⠥⣄⠀⠀⠀⢀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠈⢷⣜⣆⠀⢀⡅⠀⠀⠈⠉⠀⢀⡴⠀⠀⠀⠀⢸⡇⡇⠈⠁⣼⣁⣤⠤⠒⢊⠥⠒⠊⠉⠉⠉⠉⠙⠻⢶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠙⢿⣷⣬⣳⠤⠴⠤⡖⠊⢁⣿⠀⠀⠀⠀⠈⡿⠁⠀⢚⣏⠵⠈⢲⣊⠥⠒⠒⠒⠒⠤⢄⡀⠀⠀⠀⠙⢷⡄⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠙⢿⣌⠑⢆⢠⠇⢠⡞⢸⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⢘⡏⠉⠉⠉⠑⢦⡀⠀⠈⠓⣄⠀⠀⠀⢻⡄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣰⡾⠳⠀⡏⠇⢈⡟⣴⠋⠀⡼⣄⠀⠀⠀⠀⠀⠀⢆⠀⠀⠀⠀⢸⠃⠀⠀⠀⠀⠀⠹⡄⠀⠀⠈⡆⠀⠀⠈⣧⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢫⡻⠤⠔⢃⡶⢋⡞⢁⠤⠊⠀⢸⠦⡌⠀⠀⣖⣀⣨⣦⡀⠀⢀⣎⡀⠀⠀⠀⠀⠀⠀⢳⠀⠀⠀⢸⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠈⠉⠉⠁⠀⡾⠊⣁⠠⠤⢒⣻⡟⠀⠀⡴⠃⠀⠀⢳⠙⡄⠀⠀⢳⠀⠀⠀⠀⠀⢠⠏⠀⠀⠀⡎⠀⢀⡜⡟⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢸⡡⠊⠀⣠⠖⠋⣼⣤⠀⢸⢳⠀⠀⠀⠀⡇⠸⡀⠀⠀⣇⠀⠀⠀⣠⠋⠀⠀⢀⠞⢀⡠⠋⡜⠁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠸⡇⠀⡾⠓⢶⠀⢻⢙⣖⠈⠛⠦⡄⠀⠀⢸⠀⡇⠀⠀⢸⡀⢀⡼⠁⠀⣠⣖⡡⠔⢉⡴⠋⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠦⠝⠶⠟⠀⢸⢿⡀⠀⠀⢠⠃⠀⠀⡜⠀⡇⠀⠀⠈⡇⡾⠁⡰⡻⠊⠁⣠⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣀⣱⣄⣠⡏⠀⠀⠰⠧⣴⠁⠀⠀⢀⡇⢷⣸⠀⡁⠀⠀⠛⠲⠴⠒⠒⠒⣲⣦⣑⢲⡦⣄⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠉⠉⠉⠉⠁⠀⠙⠲⠧⠤⠤⠤⠤⠔⠒⠊⠉⠁⢀⡄⠈⠹⡌⢇
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣤⢤⣜⠡⠊
+            """)
+        continue
+
+
+
     print("Now team " + str(teams[step].name + " is making a move"))
     inp = input()
     first_command = inp.split(" ")[0]
@@ -133,6 +252,13 @@ while not end:
                         print("Do you want to attack your own piece? What a dishonor!")
                         continue
 
+                    # this means that this piece is king
+                    if boardik.figures[boardik.cells[p2.x][p2.y]].name == \
+                            boardik.figures[boardik.cells[p2.x][p2.y]].team.name:
+                        for i in teams:
+                            if boardik.figures[boardik.cells[p2.x][p2.y]].team == i:
+                                i.lose = True
+
                     boardik.cells[p2.x][p2.y] = -1
                     boardik.names[p2.x][p2.y] = "   "
                     # Let's not remove prey from figures array (it will be easier to make)
@@ -167,6 +293,13 @@ while not end:
                     in boardik.figures[boardik.cells[p1.x][p1.y]].moves):
                 print(boardik.figures[boardik.cells[p1.x][p1.y]].name + " can't attack there")
                 continue  # p1 can't attack (for now it's = move) to place p2
+
+            # this means that this piece is king
+            if boardik.figures[boardik.cells[p3.x][p3.y]].name == \
+                    boardik.figures[boardik.cells[p3.x][p3.y]].team.name:
+                for i in teams:
+                    if boardik.figures[boardik.cells[p3.x][p3.y]].team == i:
+                        i.lose = True
 
             boardik.cells[p3.x][p3.y] = -1
             boardik.names[p3.x][p3.y] = "   "

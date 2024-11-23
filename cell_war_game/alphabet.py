@@ -71,3 +71,4 @@ class Team:
     def __init__(self, name: str, colour: str):  # colour - from colorama
         self.name = name
         self.colour = colour
+        self.lose = False

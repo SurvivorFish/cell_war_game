@@ -30,6 +30,8 @@ class Guy(Figure):
              (-1, 0), (1, 0),
              (-1, 1), (0, 1), (1, 1)]
 
+    charge_attack = [(0, -1), (-1, 0), (1, 0), (0, 1)]  # Just not to forget. It was for balance. Understood from game.
+
     def __init__(self, x: int, y: int, team: alphabet.Team):
         super(Guy, self).__init__('guy', alphabet.Place(x, y), self.moves, team)
 

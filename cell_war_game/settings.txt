@@ -1,0 +1,4 @@
+#JSON? I don't know JS, I will do, as minecraft modders made in past
+default_lang: en
+ask_lang: 0
+use_terminal: 1
