@@ -1,18 +1,13 @@
-added settings
-added balovstvo with pygame and resources for it
-added loosing game
-added way to win the game (eat the king)
-added presets of piece placement
-understood, that code is toooooooooo complicated
-tried to play with brother on preset 2 (first game.txt) (not played till end)
+Added possibility to win for every team
+Moved importing games from presets to another file
+a bit decreased size of main.py (started perelopachivanie of code)
+Finally added chess!!!))) (Now it's a bit broken. Every piece can jump over another. So queen now is overpowered. I will add way finding code for different behaviour in next updates)
 
-provedeno second battle with https://github.com/collapsedonion
-realized that only first player can win... how chestnosti netu...
+promises for next update (like plans, but a bit more strict):
+Jump-over and swing-through behaviour
+directions??? (like pieces can look in different directions, so different behaviour will be. It will be great for pawns: They will be able to move only forward)
+perelopatit code + find issues that may cause a crash + good highlighted board print
 
-plans:
-perelopatit code: there are a lot of Legoshi code, it works, but may be more beautiful (already done with pos_moves)
-good highlighted board print
-find issues that may cause a crash
+strange plans:
 main menu
-reinventing chess (add chess figures)
-add json file for different languages (lolcat, русский, english, 中文, 日本語)
+different languages (lolcat, русский, english, 中文, 日本語)?

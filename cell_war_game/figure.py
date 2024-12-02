@@ -8,15 +8,23 @@ from dataclasses import dataclass, field
 class Figure:
     name: str
     place: alphabet.Place
-    moves: list[tuple[int, int]]
-    # moves:list[tuple[int, int]] = field(default_factory=list)
-    # Don't know how to use it. This line shows an error...
+    jump: bool   # Can jump over the other pieces
+    swing: bool  # Can attack through another pieces
+    move: list[tuple[int, int]]
+    attack: list[tuple[int, int]]
+    capture: list[tuple[int, int]]
+    charge: list[tuple[int, int]]
     team: alphabet.Team
 
-    def __init__(self, name: str, place: alphabet.Place, moves: list[tuple[int, int]], team: alphabet.Team):
+    def __init__(self, name: str, place: alphabet.Place,
+                 move: list[tuple[int, int]], attack: list[tuple[int, int]], capture: list[tuple[int, int]],
+                 charge: list[tuple[int, int]], team: alphabet.Team):
         self.name = name
         self.place = place
-        self.moves = moves
+        self.move = move
+        self.attack = attack
+        self.capture = capture
+        self.charge = charge
         self.team = team
 
     def goto(self, place):
@@ -26,29 +34,124 @@ class Figure:
 
 
 class Guy(Figure):
-    moves = [(-1, -1), (0, -1), (1, -1),
-             (-1, 0), (1, 0),
-             (-1, 1), (0, 1), (1, 1)]
+    move = [(-1, -1), (0, -1), (1, -1),
+            (-1, 0), (1, 0),
+            (-1, 1), (0, 1), (1, 1)]
 
-    charge_attack = [(0, -1), (-1, 0), (1, 0), (0, 1)]  # Just not to forget. It was for balance. Understood from game.
+    attack = move
+    capture = move
+    charge = []
 
     def __init__(self, x: int, y: int, team: alphabet.Team):
-        super(Guy, self).__init__('guy', alphabet.Place(x, y), self.moves, team)
+        super(Guy, self).__init__('guy', alphabet.Place(x, y), self.move, self.attack, self.capture, self.charge, team)
 
 
-class Cat(Figure):
-    moves = [(-2, -2), (0, -2), (2, -2),
+class Cat(Figure):  # Really strange piece
+    move = [(-2, -2), (0, -2), (2, -2),
              (-2, 0), (2, 0),
              (-2, 2), (0, 2), (2, 2)]
 
+    attack = move
+    capture = move
+    charge = move
+
     def __init__(self, x: int, y: int, team: alphabet.Team):
-        super(Cat, self).__init__('cat', alphabet.Place(x, y), self.moves, team)
+        super(Cat, self).__init__('cat', alphabet.Place(x, y), self.move, self.attack, self.capture, self.charge, team)
 
 
 class King(Figure):
-    moves = [(-1, -1), (0, -1), (1, -1),
+    move = [(-1, -1), (0, -1), (1, -1),
              (-1, 0), (1, 0),
              (-1, 1), (0, 1), (1, 1)]
+    attack = move
+    capture = move
+    charge = []
 
     def __init__(self, x: int, y: int, team: alphabet.Team):
-        super(King, self).__init__(team.name, alphabet.Place(x, y), self.moves, team)
+        super(King, self).__init__(team.name, alphabet.Place(x, y),
+                                   self.move, self.attack, self.capture, self.charge, team)
+
+
+class Pawn(Figure):  # Buffed pawn, I will change it in next updates, maybe
+    move = [(-1, -1), (0, -1), (1, -1),
+            (-1, 0), (1, 0),
+            (-1, 1), (0, 1), (1, 1)]
+
+    attack = []
+    capture = move
+    charge = []
+
+    def __init__(self, x: int, y: int, team: alphabet.Team):
+        super(Pawn, self).__init__('pwn', alphabet.Place(x, y), self.move, self.attack, self.capture, self.charge, team)
+
+
+class Knight(Figure):
+    move = [(-1, -2), (1, -2),
+            (-2, 1), (-2, -1), (2, 1), (2, -1),
+            (-1, 2), (1, 2)]
+
+    attack = []
+    capture = move
+    charge = []
+
+    def __init__(self, x: int, y: int, team: alphabet.Team):
+        super(Knight, self).__init__('knt', alphabet.Place(x, y),
+                                     self.move, self.attack, self.capture, self.charge, team)
+
+
+class Bishop(Figure):
+    move = []
+
+    for i in range(1, 9):
+        move.append((i, i))
+        move.append((i, -i))
+        move.append((-i, i))
+        move.append((-i, -i))
+
+    attack = []
+    capture = move
+    charge = []
+
+    def __init__(self, x: int, y: int, team: alphabet.Team):
+        super(Bishop, self).__init__('bhp', alphabet.Place(x, y),
+                                     self.move, self.attack, self.capture, self.charge, team)
+
+
+class Rook(Figure):
+    move = []
+
+    for i in range(1, 9):
+        move.append((0, i))
+        move.append((0, -i))
+        move.append((i, 0))
+        move.append((-i, 0))
+
+
+    attack = []
+    capture = move
+    charge = []
+
+    def __init__(self, x: int, y: int, team: alphabet.Team):
+        super(Rook, self).__init__('ruk', alphabet.Place(x, y), self.move, self.attack, self.capture, self.charge, team)
+
+
+class Queen(Figure):
+    move = []
+
+    for i in range(1, 9):
+        move.append((0, i))
+        move.append((0, -i))
+        move.append((i, 0))
+        move.append((-i, 0))
+
+        move.append((i, i))
+        move.append((i, -i))
+        move.append((-i, i))
+        move.append((-i, -i))
+
+    attack = []
+    capture = move
+    charge = []
+
+    def __init__(self, x: int, y: int, team: alphabet.Team):
+        super(Queen, self).__init__('QUE', alphabet.Place(x, y), self.move, self.attack, self.capture, self.charge, team)

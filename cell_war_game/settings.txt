@@ -1,4 +1,5 @@
-#JSON? I don't know JS, I will do, as minecraft modders made in past
+#JSON? I don't know JS (cool emoji), so I will do, like minecraft moders did in the past
 default_lang: en
 ask_lang: 0
 use_terminal: 1
+recording: 0
