@@ -9,8 +9,15 @@ _RU_ALPHABET_ = "абвгдеёжзийклмнопрстуфхцчшщъыьэ�
 # haven't found all the letters... TnT
 _EN_ALPHABET_ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-
 # designation in english letters. Firstly - lowercase, then - uppercase
+
+
+__HELP_MESSAGE__ = '''move (from) (to) - moves figura from cell (from) to cell (to)
+attack (from) (to) - attack another player's figure, but don't capture it's place
+capture (from) (to) - attack another player's figure and capture it's place
+charge (from) (to) (attack) - capture empty place and attack another player's figure
+print - prints board again
+skip - skip your turn'''
 
 
 def num(letter: str, lang: str) -> int:
@@ -87,8 +94,10 @@ class Place:
 
     def __eq__(self, other):
         if isinstance(other, Place): return self.x == other.x and self.y == other.y
-        if isinstance(other, tuple): return self.x == other[0] and self.y == other[1]
-        else: return
+        if isinstance(other, tuple):
+            return self.x == other[0] and self.y == other[1]
+        else:
+            return
 
 
 class Team:

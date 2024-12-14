@@ -6,7 +6,9 @@ from colorama import Style
 
 
 class Board:
-    def __init__(self, width: int, height: int):  # creating a board
+    def __init__(self, width: int, height: int, teams: list, first_move = 0):  # creating a board
+        self.teams = teams
+        self.step = first_move  # step is value that means team with number step will start first
         self.figures = []
         self.w = width
         self.h = height

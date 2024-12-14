@@ -1,13 +1,17 @@
-Added possibility to win for every team
-Moved importing games from presets to another file
-a bit decreased size of main.py (started perelopachivanie of code)
-Finally added chess!!!))) (Now it's a bit broken. Every piece can jump over another. So queen now is overpowered. I will add way finding code for different behaviour in next updates)
+Simplified code of "move" commands in main.py
+Added limitations for each type of move (move, attack, charge in figure)
+Added directions (just template for future features)
+Added chess pawn moves (thanks to direction)
+now JSON settings
+game saving, game loading
+added first swing-through and jump-over behaviours
+now win condition is 100% working, I guess
+some smaller improvements
 
 promises for next update (like plans, but a bit more strict):
-Jump-over and swing-through behaviour
-directions??? (like pieces can look in different directions, so different behaviour will be. It will be great for pawns: They will be able to move only forward)
-perelopatit code + find issues that may cause a crash + good highlighted board print
+More jump-over and swing-through behaviour
+perelopatit code + find more issues that may cause a crash + good highlighted board print
 
 strange plans:
 main menu
-different languages (lolcat, русский, english, 中文, 日本語)?
+different languages (lolcat, русский, english, 中文, 日本語)? (using JSON)

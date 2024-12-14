@@ -6,7 +6,8 @@ from colorama import Fore
 from colorama import Style
 
 
-def preset(number: int, teams: list, lst: list):
+def preset(number: int, lst: list):
+    teams = []
     # number = number of preset, teams = list of teams, lst = list of additional parameters
     if number == 0:  # Your preset
         # It is not good to use more than 66 columns. (You will see, why it is so).
@@ -18,7 +19,7 @@ def preset(number: int, teams: list, lst: list):
         boardik.add_figure(figure.King(2, 4, teams[1]))
 
     elif number == 1:  # Preset I used in the very beginning for testing
-        boardik = board.Board(9, 9)
+        boardik = board.Board(9, 9, teams)
         teams += [alphabet.Team("RED", Fore.RED), alphabet.Team("BLU", Fore.BLUE)]
         # Red team
         boardik.add_figure(figure.Guy(5, 5, teams[0]))
@@ -28,7 +29,7 @@ def preset(number: int, teams: list, lst: list):
         boardik.add_figure(figure.King(4, 0, teams[1]))
 
     elif number == 2:  # Two teams: king and row of guys
-        boardik = board.Board(5, 5)
+        boardik = board.Board(5, 5, teams)
         teams += [alphabet.Team("RED", Fore.RED), alphabet.Team("BLU", Fore.BLUE)]
 
         # Pawns
@@ -45,7 +46,7 @@ def preset(number: int, teams: list, lst: list):
         boardik.add_figure(figure.King(boardik.w // 2, boardik.h - 1, teams[1]))
 
     elif number == 3:  # Two teams: king, row of guys and two cats
-        boardik = board.Board(5, 5)
+        boardik = board.Board(5, 5, teams)
         teams += [alphabet.Team("RED", Fore.RED), alphabet.Team("BLU", Fore.BLUE)]
 
         # Pawns
@@ -66,15 +67,15 @@ def preset(number: int, teams: list, lst: list):
         boardik.add_figure(figure.Cat(boardik.w // 2 + 1, boardik.h - 1, teams[1]))  # Cat
 
     elif number == 4:  # Chess!!!
-        boardik = board.Board(8, 8)
+        boardik = board.Board(8, 8, teams)
         teams += [alphabet.Team("WHT", Fore.WHITE), alphabet.Team("BLC", Fore.BLACK)]
 
         # Pawns
         for i in range(boardik.w):
             # Black team
-            boardik.add_figure(figure.Pawn(i, 6, teams[1]))
+            boardik.add_figure(figure.Pawn(i, 6, teams[1], 2))
             # White team
-            boardik.add_figure(figure.Pawn(i, 1, teams[0]))
+            boardik.add_figure(figure.Pawn(i, 1, teams[0], 6))
 
         # White team
         boardik.add_figure(figure.King(3, 0, teams[0]))
@@ -97,16 +98,22 @@ def preset(number: int, teams: list, lst: list):
         boardik.add_figure(figure.Rook(7, 7, teams[1]))
 
     else:  # Sandbox?
-        boardik = board.Board(21, 21)
+        boardik = board.Board(21, 21, teams)
         teams += [alphabet.Team("RED", Fore.RED)]
         boardik.add_figure(figure.King(10, 10, teams[0]))
+
+        teams += [alphabet.Team("WHT", Fore.WHITE), alphabet.Team("BLC", Fore.BLACK)]
+        boardik.add_figure(figure.King(13, 13, teams[1]))
+        boardik.add_figure(figure.King(14, 14, teams[2]))
+
+        boardik.add_figure(figure.Cat(13, 11, teams[0]))
 
     return boardik
 
 
 def my_preset(teams: list):
     # It is not good to use more than 66 columns. (You will see, why it is so).
-    boardik = board.Board(5, 5)
+    boardik = board.Board(5, 5, teams)
     teams += [alphabet.Team("RED", Fore.RED), alphabet.Team("BLU", Fore.BLUE)]
     # Red team
     boardik.add_figure(figure.Guy(2, 0, teams[0]))
