@@ -1,11 +1,14 @@
 from datetime import datetime
-import json
 from dataclasses import dataclass
+import json
 import dill
-import alphabet
-import presets_JSON
+
 from colorama import Fore
 from colorama import Style
+
+import alphabet
+import cell_war_game.presets as presets
+from figure import MoveType
 
 
 def test_designation():  # Just small test of designation of columns
@@ -74,7 +77,7 @@ start_from_preset = settings.start_from_preset
 if start_from_preset:
     # Game presets (teams, colours, pieces)
     preset = 4
-    boardik = presets_JSON.preset(preset, [])
+    boardik = presets.preset(preset, [])
 else:
     print("Please, write the save file")
     loaded_file = input()
@@ -134,25 +137,17 @@ while not end:
 
     # READ COMMAND
     print("Now team " + str(boardik.teams[boardik.step].name + " is making a move"))
-    inp = input()
+    inp = input().strip()
     first_command = inp.split(" ")[0]
     commands = inp.split(" ")[1::]
 
     # SOME KIND OF SWITCH CASE
     # "MOVE" commands
-    if first_command == "move" or first_command == "capture" or first_command == "attack" or first_command == "charge":
-
+    if first_command in MoveType:
         # type of move determination
-        if first_command == "move":
-            type_of_move = 0
-        elif first_command == "capture":
-            type_of_move = 1
-        elif first_command == "attack":
-            type_of_move = 2
-        else:
-            type_of_move = 3
-
-        if len(commands) == 0 or commands[0] == "":
+        move_type = MoveType(first_command)
+        
+        if len(commands) == 0:
             print(Fore.RED + "Kavo?" + Style.RESET_ALL)
 
         elif len(commands) == 1:
@@ -167,8 +162,8 @@ while not end:
 
             boardik.print(langs[boardik.step], f)
 
-        elif len(commands) == 2 or (len(commands) == 3 and commands[2] == ""):
-            if type_of_move == 3:
+        elif len(commands) == 2:
+            if move_type == MoveType.CHARGE:
                 print('Type "help" to understand what charge mean')
                 continue
 
@@ -192,7 +187,7 @@ while not end:
 
             # jumping into space
             if boardik.cells[p2.x][p2.y] == -1:  # is p2 a gap?
-                if type_of_move == 1 or type_of_move == 2:
+                if move_type in (MoveType.ATTACK, MoveType.CAPTURE):
                     print("I can't attack non-existing figure")
                     continue
 
@@ -211,7 +206,7 @@ while not end:
             # swapping or attacking figures
             else:  # if p2 is a figure
                 # move command = swamp
-                if type_of_move == 0:
+                if move_type == MoveType.MOVE:
                     if (not p2 - p1 in f1.move) or (not f1.can('move', boardik)[p2.x][p2.y] > 0):
                         print(f1.name + " can't move there")
                         continue  # p1 can't move to place p2
@@ -261,7 +256,7 @@ while not end:
                     boardik.print(langs[boardik.step])
 
         # charge
-        elif type_of_move == 3 and len(commands) == 3 or (len(commands) == 4 and commands[3] == ""):
+        elif move_type == MoveType.CHARGE and len(commands) == 3:
             # "
             p1 = alphabet.Place(alphabet.num(commands[0][0], langs[boardik.step]), int(commands[0][1::]) - 1)
             p2 = alphabet.Place(alphabet.num(commands[1][0], langs[boardik.step]), int(commands[1][1::]) - 1)

@@ -6,17 +6,33 @@ from colorama import Fore
 from colorama import Style
 
 
-def preset(number: int, lst: list):
+def preset_0(lst: list):
     teams = []
+    boardik = board.Board(5, 5)
+    teams += [alphabet.Team("RED", Fore.RED), alphabet.Team("BLU", Fore.BLUE)]
+    # Red team
+    boardik.add_figure(figure.Guy(2, 0, teams[0]))
+    # Blue team
+    boardik.add_figure(figure.King(2, 4, teams[1]))
+    return boardik
+
+def preset_1(lst: list):
+    pass
+
+
+_ALL_PRESETS = [
+    preset_0,
+    preset_1
+]
+
+
+def preset(number: int, lst: list):
+    return _ALL_PRESETS[number](lst)
+    
     # number = number of preset, teams = list of teams, lst = list of additional parameters
     if number == 0:  # Your preset
         # It is not good to use more than 66 columns. (You will see, why it is so).
-        boardik = board.Board(5, 5)
-        teams += [alphabet.Team("RED", Fore.RED), alphabet.Team("BLU", Fore.BLUE)]
-        # Red team
-        boardik.add_figure(figure.Guy(2, 0, teams[0]))
-        # Blue team
-        boardik.add_figure(figure.King(2, 4, teams[1]))
+        
 
     elif number == 1:  # Preset I used in the very beginning for testing
         boardik = board.Board(9, 9, teams)

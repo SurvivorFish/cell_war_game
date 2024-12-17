@@ -83,8 +83,10 @@ class Place:
         return Place(self.x + p[0], self.y + p[1])
 
     def __add__(self, other):
-        if isinstance(other, Place): return Place(self.x + other.x, self.y + other.y)
-        if isinstance(other, tuple): return self._add_tuple(other)
+        if isinstance(other, tuple): 
+            other = Place(*other)
+        if isinstance(other, Place): 
+            return Place(self.x + other.x, self.y + other.y)
         return
 
     def __sub__(self, other):
@@ -105,3 +107,9 @@ class Team:
         self.name = name
         self.colour = colour
         self.lose = False
+
+
+if __name__ == '__main__':
+    p1 = Place(1, 2)
+    # вместо p1 + (2, 3)
+    p1 + Place(2, 3)

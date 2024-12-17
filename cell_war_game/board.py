@@ -1,3 +1,5 @@
+from dataclasses import dataclass, field
+
 import math
 import alphabet
 import figure
@@ -5,16 +7,29 @@ from colorama import Back
 from colorama import Style
 
 
+@dataclass
 class Board:
-    def __init__(self, width: int, height: int, teams: list, first_move = 0):  # creating a board
-        self.teams = teams
-        self.step = first_move  # step is value that means team with number step will start first
-        self.figures = []
-        self.w = width
-        self.h = height
-        self.names = [['   ' for _ in range(height)] for _ in range(width)]
-        self.cells = [[-1 for _ in range(height)] for _ in range(width)]
-
+    teams: list[str]
+    width: int
+    height: int
+    cells: list[list[int]]
+    
+    figures: list[figure.Figure] = field(default_factory=list)
+    step: int = field(default=0)
+    
+    def __post_init__(self):
+        self.cells = [
+            [-1 for _ in range(self.height)] 
+            for _ in range(self.width)
+        ]
+        
+    def _figure_name_at(self, place: alphabet.Place) -> str:
+        figure_id = self.cells[place.x][place.y]
+        if figure_id != -1:
+            return self.figures[figure_id].name
+        return '   '
+        
+    
     def add_figure(self, fgr: figure.Figure):  # adding a figure to the board
         self.figures.append(fgr)
         x = fgr.place.x

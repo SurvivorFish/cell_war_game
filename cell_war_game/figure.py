@@ -1,76 +1,68 @@
-import alphabet
 from dataclasses import dataclass
-import board
+from enum import Enum
+
+import alphabet
+from board import Board
 
 
-def __direction__(direction_: int):
-    if direction_ == 0: return tuple((1, 0))
-    if direction_ == 1: return tuple((1, -1))
-    if direction_ == 2: return tuple((0, -1))
-    if direction_ == 3: return tuple((-1, -1))
-    if direction_ == 4: return tuple((-1, 0))
-    if direction_ == 5: return tuple((-1, 1))
-    if direction_ == 6: return tuple((0, 1))
-    if direction_ == 7: return tuple((1, 1))
+_ALL_DIRECTIONS = [
+    (1, 0),
+    (1, -1),
+    (0, -1),
+    (-1, -1),
+    (-1, 0),
+    (-1, 1),
+    (0, 1),
+    (1, 1),
+]
+
+
+def _direction(d: int):
+    if d < len(_ALL_DIRECTIONS):
+        return _ALL_DIRECTIONS[d]
     return None
+
+
+# Enums
+class MoveType(Enum):
+    MOVE = "move"
+    ATTACK = "attack"
+    CAPTURE = "capture"
+    CHARGE = "charge"
 
 
 @dataclass
 class Figure:
+    '''
+    Here you can place doc comments, for example:
+    
+    :param direct: Piece direction:
+      - 321
+      - 4*0
+      - 567
+      - * = -1 - special direction
+    '''
     name: str
     place: alphabet.Place
     jump: int  # Type of jumping
     swing: int  # Type of "swinging" through figures
     move_len: int
     attack_len: int
-    direct: int  # Piece direction:
-    # 321
-    # 4*0
-    # 567
-    # * = -1 - special direction
-    move: list[tuple[int, int]]
-    attack: list[tuple[int, int]]
-    capture: list[tuple[int, int]]
-    charge: list[tuple[int, int]]
+    direct: int  
+    moves: dict[MoveType, list[tuple[int, int]]]
     team: alphabet.Team
-
-    def __init__(self, name: str, place: alphabet.Place, jump: int, swing: int, move_len: int, attack_len: int,
-                 direct: int, move: list[tuple[int, int]], attack: list[tuple[int, int]],
-                 capture: list[tuple[int, int]], charge: list[tuple[int, int]], team: alphabet.Team):
-        self.name = name
-        self.place = place
-        self.jump = jump
-        self.swing = swing
-        self.direct = direct
-        self.move = move
-        self.move_len = move_len  # Just additional field
-        self.attack_len = attack_len  # same
-        self.attack = attack
-        self.capture = capture
-        self.charge = charge
-        self.team = team
 
     def goto(self, place):
         if isinstance(place, alphabet.Place): self.place = alphabet.Place(place.x, place.y)
         if isinstance(place, tuple): self.place = alphabet.Place(place[0], place[1])
         return place
+    
+    def _reachable_places(self, move_type: MoveType, board: Board) -> list[list[int]]:
+        ''' dfs or bfs '''
+        pass
 
-    def can(self, type_of_move: str, boardik: board):
-        # type_of_move:
-        # move = 1
-        # attack = 2
-        # capture = 3
-        # charge = 4
-        if type_of_move == 'move':
-            move_mas = self.move
-        elif type_of_move == 'attack':
-            move_mas = self.attack
-        elif type_of_move == 'capture':
-            move_mas = self.capture
-        elif type_of_move == 'charge':
-            move_mas = self.charge
-        else:
-            move_mas = None
+    def can(self, type_of_move: MoveType, boardik: Board):
+        move_mas = self.moves.get(type_of_move, [])
         move_len = 8
 
         net = []
@@ -121,22 +113,12 @@ class Figure:
                         if net[i][j] == 0:
                             flag = True
                         Maxes = []
-                        if i > 0 and net[i - 1][j] > 0:
-                            Maxes.append(net[i - 1][j])
-                        if j > 0 and net[i][j - 1] > 0:
-                            Maxes.append(net[i][j - 1])
-                        if i < boardik.w - 1 and net[i + 1][j] > 0:
-                            Maxes.append(net[i + 1][j])
-                        if j < boardik.h - 1 and net[i][j + 1] > 0:
-                            Maxes.append(net[i][j + 1])
-                        if i > 0 and j < boardik.h - 1 and net[i - 1][j + 1] > 0:
-                            Maxes.append(net[i - 1][j + 1])
-                        if i > 0 and j > 0 and net[i - 1][j - 1] > 0:
-                            Maxes.append(net[i - 1][j - 1])
-                        if i < boardik.w - 1 and j > 0 and net[i + 1][j - 1] > 0:
-                            Maxes.append(net[i + 1][j - 1])
-                        if i < boardik.w - 1 and j < boardik.h - 1 and net[i + 1][j + 1] > 0:
-                            Maxes.append(net[i + 1][j + 1])
+                        
+                        for dx, dy in _ALL_DIRECTIONS:
+                            i2, j2 = i + dx, j + dy
+                            if 0 <= i2 < boardik.width and 0 <= j2 < boardik.height:
+                                Maxes.append(net[i2][j2])
+                            
                         if len(Maxes) > 0:
                             net[i][j] = max(Maxes) + 1
                         else:
@@ -163,44 +145,53 @@ class Guy(Figure):
         capture = move
         charge = []
 
+        # TODO change to new constructor of figure
         super(Guy, self).__init__('guy', alphabet.Place(x, y), 1, 1, -1, 1, 1,
                                   move, attack, capture, charge, team)
 
 
 class Cat(Figure):  # Really strange piece
-    move = [(-2, -2), (0, -2), (2, -2),
+    def __init__(self, x: int, y: int, team: alphabet.Team):
+        move = [(-2, -2), (0, -2), (2, -2),
             (-2, 0), (2, 0),
             (-2, 2), (0, 2), (2, 2)]
 
-    attack = move
-    capture = move
-    charge = move
+        attack = move[:]
+        capture = move[:]
+        charge = move[:]
 
-    def __init__(self, x: int, y: int, team: alphabet.Team):
-        super(Cat, self).__init__('cat', alphabet.Place(x, y), 2, 2, -1, 2, 2,
-                                  self.move, self.attack, self.capture, self.charge, team)
+        super(Cat, self).__init__(
+            'cat', alphabet.Place(x, y), 2, 2, -1, 2, 2,
+            {
+                MoveType.MOVE: move,
+                MoveType.ATTACK: attack,
+                MoveType.CAPTURE: capture,
+                MoveType.CHARGE: charge
+            }, 
+            team
+        )
 
 
 class King(Figure):
-    move = [(-1, -1), (0, -1), (1, -1),
+    def __init__(self, x: int, y: int, team: alphabet.Team):    
+        move = [(-1, -1), (0, -1), (1, -1),
             (-1, 0), (1, 0),
             (-1, 1), (0, 1), (1, 1)]
-    attack = move
-    capture = move
-    charge = []
+        attack = move
+        capture = move
+        charge = []
 
-    def __init__(self, x: int, y: int, team: alphabet.Team):
         super(King, self).__init__(team.name, alphabet.Place(x, y), 1, 1, -1, 1, 1,
-                                   self.move, self.attack, self.capture, self.charge, team)
+                                   move, attack, capture, charge, team)
 
 
 class Pawn(Figure):  # Buffed pawn, I will change it in next updates, maybe
     def __init__(self, x: int, y: int, team: alphabet.Team, direction: int):
-        m = __direction__(direction)
+        m = _direction(direction)
         move = [m]
         attack = []
-        m1 = __direction__(direction + 1)
-        m2 = __direction__(direction - 1)
+        m1 = _direction(direction + 1)
+        m2 = _direction(direction - 1)
         capture = [m1, m2]
         charge = []
         super(Pawn, self).__init__('pwn', alphabet.Place(x, y), 1, 1, direction, 1, 1,
@@ -208,73 +199,76 @@ class Pawn(Figure):  # Buffed pawn, I will change it in next updates, maybe
 
 
 class Knight(Figure):
-    move = [(-1, -2), (1, -2),
+    def __init__(self, x: int, y: int, team: alphabet.Team):
+        move = [(-1, -2), (1, -2),
             (-2, 1), (-2, -1), (2, 1), (2, -1),
             (-1, 2), (1, 2)]
 
-    attack = []
-    capture = move
-    charge = []
-
-    def __init__(self, x: int, y: int, team: alphabet.Team):
+        attack = []
+        capture = move
+        charge = []
+    
         super(Knight, self).__init__('knt', alphabet.Place(x, y), 2, 2, -1, 3, 3,
                                      self.move, self.attack, self.capture, self.charge, team)
 
 
 class Bishop(Figure):
-    move = []
-
-    for i in range(1, 9):
-        move.append((i, i))
-        move.append((i, -i))
-        move.append((-i, i))
-        move.append((-i, -i))
-
-    attack = []
-    capture = move
-    charge = []
-
     def __init__(self, x: int, y: int, team: alphabet.Team):
+        move = []
+
+        for i in range(1, 9):
+            move.append((i, i))
+            move.append((i, -i))
+            move.append((-i, i))
+            move.append((-i, -i))
+
+        attack = []
+        capture = move
+        charge = []
+    
         super(Bishop, self).__init__('bhp', alphabet.Place(x, y), 1, 1, -1, 8, 8,
                                      self.move, self.attack, self.capture, self.charge, team)
 
 
 class Rook(Figure):
-    move = []
-
-    for i in range(1, 9):
-        move.append((0, i))
-        move.append((0, -i))
-        move.append((i, 0))
-        move.append((-i, 0))
-
-    attack = []
-    capture = move
-    charge = []
-
     def __init__(self, x: int, y: int, team: alphabet.Team):
-        super(Rook, self).__init__('ruk', alphabet.Place(x, y), 1, 1, -1, 8, 8,
-                                   self.move, self.attack, self.capture, self.charge, team)
+        move = []
+
+        for i in range(1, 9):
+            move.append((0, i))
+            move.append((0, -i))
+            move.append((i, 0))
+            move.append((-i, 0))
+
+        attack = []
+        capture = move
+        charge = []
+
+        super(Rook, self).__init__(
+            'ruk', 
+            alphabet.Place(x, y), 1, 1, -1, 8, 8,
+            self.move, self.attack, self.capture, self.charge, team
+        )
 
 
 class Queen(Figure):
-    move = []
-
-    for i in range(1, 9):
-        move.append((0, i))
-        move.append((0, -i))
-        move.append((i, 0))
-        move.append((-i, 0))
-
-        move.append((i, i))
-        move.append((i, -i))
-        move.append((-i, i))
-        move.append((-i, -i))
-
-    attack = []
-    capture = move
-    charge = []
-
     def __init__(self, x: int, y: int, team: alphabet.Team):
+        move = []
+
+        for i in range(1, 9):
+            move.append((0, i))
+            move.append((0, -i))
+            move.append((i, 0))
+            move.append((-i, 0))
+
+            move.append((i, i))
+            move.append((i, -i))
+            move.append((-i, i))
+            move.append((-i, -i))
+
+        attack = []
+        capture = move
+        charge = []
+
         super(Queen, self).__init__('QUE', alphabet.Place(x, y), 1, 1, -1, 8, 8,
                                     self.move, self.attack, self.capture, self.charge, team)
