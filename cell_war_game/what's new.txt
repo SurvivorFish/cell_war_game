@@ -1,0 +1,17 @@
+Simplified code of "move" commands in main.py
+Added limitations for each type of move (move, attack, charge in figure)
+Added directions (just template for future features)
+Added chess pawn moves (thanks to direction)
+now JSON settings
+game saving, game loading
+added first swing-through and jump-over behaviours
+now win condition is 100% working, I guess
+some smaller improvements
+
+promises for next update (like plans, but a bit more strict):
+More jump-over and swing-through behaviour
+perelopatit code + find more issues that may cause a crash + good highlighted board print
+
+strange plans:
+main menu
+different languages (lolcat, русский, english, 中文, 日本語)? (using JSON)
